@@ -28,10 +28,12 @@ HOMEWORK_STATUSES = {
 
 
 def send_message(bot, message):
+    """Sends message."""
     bot.send_message(TELEGRAM_CHAT_ID, message)
 
 
 def get_api_answer(current_timestamp):
+    """Gets api answer."""
     timestamp = current_timestamp or int(time.time())
     params = {'from_date': timestamp}
     response = requests.get(ENDPOINT, headers=HEADERS, params=params)
@@ -41,6 +43,7 @@ def get_api_answer(current_timestamp):
 
 
 def check_response(response):
+    """Checks response."""
     if not isinstance(response, dict):
         raise TypeError
     if ('homeworks' not in response
@@ -50,6 +53,7 @@ def check_response(response):
 
 
 def parse_status(homework):
+    """Parses status."""
     homework_name = homework['homework_name']
     homework_status = homework['status']
 
@@ -63,6 +67,7 @@ def parse_status(homework):
 
 
 def check_tokens():
+    """Checks_tokens."""
     res = True
     tok_dict = {
         PRACTICUM_TOKEN: 'PRACTICUM_TOKEN',
@@ -76,9 +81,10 @@ def check_tokens():
 
 
 def get_logger():
+    """Creates logger."""
     logger = logging.getLogger(__name__)
 
-    logger.setLevel(logging.INFO)
+    logger.setLevel(logging.DEBUG)
 
     formatter = logging.Formatter('%(asctime)s, [%(levelname)s] %(message)s')
 
@@ -91,15 +97,13 @@ def get_logger():
     return logger
 
 
-
 def main():
     """Основная логика работы бота."""
-
     logger = get_logger()
 
     bot = telegram.Bot(token=TELEGRAM_TOKEN)
     current_timestamp = int(time.time())
-    # current_timestamp = 1
+    current_timestamp = 1
     last_msg_st = ''
     last_msg_er = ''
     ...
@@ -115,8 +119,6 @@ def main():
                     last_msg_st = msg
             else:
                 logger.debug('Отсутствие в ответе новых статусов')
-            
-            # current_timestamp = ...
             time.sleep(RETRY_TIME)
 
         except Exception as error:
